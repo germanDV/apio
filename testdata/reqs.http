@@ -1,0 +1,13 @@
+@URL = http://localhost:4040
+
+@JWT = eyJhbGciOiJFUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJhcGlvIiwiZXhwIjoxNzIyNTcyMTA1LCJpYXQiOjE3MjI1NDMzMDUsImlzcyI6ImFwaW8iLCJyb2xlIjoidXNlciIsInN1YiI6ImFiY18zMjEifQ.i-hHZJ4JCpBKkvJeYGmMz2c20bjUNz4ToF45IRPwT90YaKfo-84FrRoHcFEbPz74o6Zh_U_NGhzlSfKnzPzCKg
+# @JWT = eyJhbGciOiJFUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJhcGlvIiwiZXhwIjoxNzIyNTcyODA4LCJpYXQiOjE3MjI1NDQwMDgsImlzcyI6ImFwaW8iLCJyb2xlIjoiYWRtaW4iLCJzdWIiOiJhZG1pbl8xMjM0NTYifQ.PZV22xGRQZz7HW57snIAg1kiRvZIFENQOzLDzc9C6Ywxzh3MBOTm0TvrgTHq7Rjie2YY-Jdh3eOwceI9C_LVYA
+
+### Healthcheck
+GET {{URL}}/healthcheck HTTP/1.1
+Accept: application/json
+
+### User Route
+GET {{URL}}/test-auth HTTP/1.1
+Accept: application/json
+Authorization: Bearer {{JWT}}
