@@ -62,6 +62,8 @@ func (api *Api) ListenAndServe() {
 	}()
 
 	api.logger.Info("Server running", "addr", api.server.Addr)
+	api.logger.Info("Open API Spec available", "route", "/swagger-ui/swagger.json")
+	api.logger.Info("Open API UI available", "route", "/swagger-ui")
 
 	<-killSig
 	api.logger.Info("Shutting down server")

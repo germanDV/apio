@@ -7,9 +7,7 @@ Features:
 - [ ] IP rate limiting using Redis.
 - [ ] Data persistence using Postgres, including migrations.
 - [X] _.env_ file support.
-- [ ] OpenAPI 3 docs and Swagger UI.
-    * https://github.com/parvez3019/go-swagger3 -> generates spec but doesn't have UI
-    * https://github.com/a-h/rest -> specs + UI
+- [X] OpenAPI 3 docs and Swagger UI.
 - [ ] Tracing with OpenTelemetry (Grafana + Tempo).
 - [ ] Metrics (Prometheus).
 - [ ] Logging (Loki).

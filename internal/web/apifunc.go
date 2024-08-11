@@ -54,7 +54,7 @@ func (af ApiFunc) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		}
 
 		// Send error response.
-		WriteJSON(w, Envelope{"error": errMsg}, status)
+		WriteJSON(w, errs.ErrResp{Error: errMsg}, status)
 	}
 
 	af.logger.Info(

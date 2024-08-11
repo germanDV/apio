@@ -18,7 +18,7 @@ type Envelope map[string]any
 
 // WriteJSON sends the response in JSON format,
 // if an encoding error occurs, it sends an empty 500 response.
-func WriteJSON(w http.ResponseWriter, data Envelope, status int) {
+func WriteJSON(w http.ResponseWriter, data any, status int) {
 	encoded, err := json.Marshal(data)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)

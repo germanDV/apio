@@ -1,11 +1,11 @@
 package main
 
 import (
-	"log/slog"
 	"net/http"
 
+	"github.com/a-h/rest"
+
 	"github.com/germandv/apio/internal/config"
-	"github.com/germandv/apio/internal/errs"
 	"github.com/germandv/apio/internal/logger"
 	"github.com/germandv/apio/internal/tokenauth"
 	"github.com/germandv/apio/internal/web"
@@ -24,26 +24,20 @@ func main() {
 		panic(err)
 	}
 
+	oas := rest.NewAPI("apio")
 	api := web.New(logger, auth)
-	api.Route("GET /healthcheck", handleHealthcheck(logger))
-	api.Route("GET /test-auth", handleTestAuth(logger))
+	api.Route("GET /healthcheck", handleHealthcheck(oas, logger))
+	api.Route("POST /test-auth/{id}", handleTestAuth(oas, logger))
+
+	// Handler for Swagger UI.
+	oasUIHandler, err := setupOpenApiSpec(oas)
+	if err != nil {
+		panic(err)
+	}
+	api.Route("GET /swagger-ui/*", func(w http.ResponseWriter, r *http.Request) error {
+		oasUIHandler.ServeHTTP(w, r)
+		return nil
+	})
 
 	api.ListenAndServe()
-}
-
-func handleTestAuth(logger *slog.Logger) func(http.ResponseWriter, *http.Request) error {
-	return func(w http.ResponseWriter, r *http.Request) error {
-		user, err := web.GetUser(r.Context())
-		if err != nil {
-			return err
-		}
-
-		if user.Role != "admin" {
-			return errs.ErrNoPermission
-		}
-
-		env := web.Envelope{"message": "you have access to this", "user": user.ID}
-		web.WriteJSON(w, env, http.StatusOK)
-		return nil
-	}
 }
