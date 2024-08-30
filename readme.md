@@ -4,8 +4,8 @@ Template for JSON-HTTP APIs.
 
 Features:
 - [X] Auth with JWT, including RBAC for two simple roles: _user_ and _admin_.
-- [ ] IP rate limiting using Redis.
-- [ ] Data persistence using Postgres, including migrations.
+- [ ] IP rate limiting using Redis (Retry-After header).
+- [X] Data persistence using Postgres, including migrations.
 - [X] _.env_ file support.
 - [X] OpenAPI 3 docs and Swagger UI.
 - [ ] Tracing with OpenTelemetry (Grafana + Tempo).
@@ -13,7 +13,7 @@ Features:
 - [ ] Logging (Loki).
 - [ ] Github Actions for PRs.
 - [X] Air for hot-reloading during development.
-- [ ] Docker to easily run everything locally.
+- [X] Docker to easily run everything locally.
 - [X] A Makefile for convenience.
 
 ## Design Decisions
@@ -25,16 +25,21 @@ Features:
 
 ## Usage
 
-In order not to pollute the template with many things that would need to be removed, a single entity has been created with basic CRUD functionality.
+In order not to pollute the template with many things that would need to be removed, keep the example small but have enough complexity to showcase the patterns to be used.
 
 ## Run It Locally
 
 Start docker containers for all dependencies:
 ```sh
-# TODO
+make docker up
+```
+
+Unless you're re-using containers from previous executions, you'll need to run the migrations:
+```sh
+make db/migrate/up
 ```
 
 Run API server in _DEV_ mode:
 ```sh
-# TODO
+make dev
 ```

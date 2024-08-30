@@ -1,4 +1,4 @@
-package main
+package web
 
 import (
 	"log/slog"
@@ -6,7 +6,6 @@ import (
 
 	"github.com/a-h/rest"
 	"github.com/germandv/apio/internal/errs"
-	"github.com/germandv/apio/internal/web"
 	"github.com/getkin/kin-openapi/openapi3"
 )
 
@@ -47,7 +46,7 @@ func handleTestAuth(oas *rest.API, _ *slog.Logger) func(http.ResponseWriter, *ht
 		HasRequestModel(rest.ModelOf[TestAuthReq]())
 
 	return func(w http.ResponseWriter, r *http.Request) error {
-		user, err := web.GetUser(r.Context())
+		user, err := GetUser(r.Context())
 		if err != nil {
 			return err
 		}
@@ -60,7 +59,7 @@ func handleTestAuth(oas *rest.API, _ *slog.Logger) func(http.ResponseWriter, *ht
 		q := r.URL.Query()
 
 		body := TestAuthReq{}
-		err = web.ReadJSON(w, r, &body)
+		err = ReadJSON(w, r, &body)
 		if err != nil {
 			return err
 		}
@@ -74,7 +73,7 @@ func handleTestAuth(oas *rest.API, _ *slog.Logger) func(http.ResponseWriter, *ht
 			BodyBar:    body.Bar,
 		}
 
-		web.WriteJSON(w, resp, http.StatusOK)
+		WriteJSON(w, resp, http.StatusOK)
 		return nil
 	}
 }

@@ -1,12 +1,13 @@
 package main
 
 import (
-	"net/http"
-
 	"github.com/a-h/rest"
 
 	"github.com/germandv/apio/internal/config"
 	"github.com/germandv/apio/internal/logger"
+	"github.com/germandv/apio/internal/memorydb"
+	"github.com/germandv/apio/internal/notes"
+	"github.com/germandv/apio/internal/tags"
 	"github.com/germandv/apio/internal/tokenauth"
 	"github.com/germandv/apio/internal/web"
 )
@@ -24,20 +25,16 @@ func main() {
 		panic(err)
 	}
 
-	oas := rest.NewAPI("apio")
-	api := web.New(logger, auth)
-	api.Route("GET /healthcheck", handleHealthcheck(oas, logger))
-	api.Route("POST /test-auth/{id}", handleTestAuth(oas, logger))
+	// dbPool, err := db.InitWithConnStr(cfg.PostgresConnStr)
+	// if err != nil {
+	// 	panic(err)
+	// }
 
-	// Handler for Swagger UI.
-	oasUIHandler, err := setupOpenApiSpec(oas)
-	if err != nil {
-		panic(err)
-	}
-	api.Route("GET /swagger-ui/*", func(w http.ResponseWriter, r *http.Request) error {
-		oasUIHandler.ServeHTTP(w, r)
-		return nil
-	})
+	tagSvc := tags.NewService(memorydb.NewTagsRepository())
+	noteSvc := notes.NewService(memorydb.NewNotesRepository())
+
+	oas := rest.NewAPI("apio")
+	api := web.New(logger, auth, oas, tagSvc, noteSvc)
 
 	api.ListenAndServe()
 }

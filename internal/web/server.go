@@ -11,19 +11,31 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/a-h/rest"
 	"github.com/germandv/apio/internal/config"
+	"github.com/germandv/apio/internal/notes"
+	"github.com/germandv/apio/internal/tags"
 	"github.com/germandv/apio/internal/tokenauth"
 )
 
 // Api is the main API HTTP server wrapper.
 type Api struct {
-	mux    *http.ServeMux
-	server *http.Server
-	logger *slog.Logger
+	mux     *http.ServeMux
+	server  *http.Server
+	logger  *slog.Logger
+	oas     *rest.API
+	tagSvc  tags.IService
+	noteSvc notes.IService
 }
 
 // New creates a new Api instance.
-func New(logger *slog.Logger, auth tokenauth.Service) *Api {
+func New(
+	logger *slog.Logger,
+	auth tokenauth.Service,
+	oas *rest.API,
+	tagSvc tags.IService,
+	noteSvc notes.IService,
+) *Api {
 	cfg := config.Get()
 	mux := &http.ServeMux{}
 
@@ -37,11 +49,18 @@ func New(logger *slog.Logger, auth tokenauth.Service) *Api {
 		ErrorLog:          slog.NewLogLogger(logger.Handler(), slog.LevelError),
 	}
 
-	return &Api{
-		mux:    mux,
-		server: server,
-		logger: logger,
+	api := &Api{
+		mux:     mux,
+		server:  server,
+		logger:  logger,
+		oas:     oas,
+		tagSvc:  tagSvc,
+		noteSvc: noteSvc,
 	}
+
+	api.routes()
+
+	return api
 }
 
 // ListenAndServe starts the server in a goroutine.

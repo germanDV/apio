@@ -26,7 +26,7 @@ func TestLoadAndparse(t *testing.T) {
 			Port int    `env:"PORT"`
 		}
 		myConfig := MyConfig{}
-		err := parse(&myConfig, "./testdata/.env")
+		err := Parse(&myConfig, "./testdata/.env")
 		if err != nil {
 			t.Error(err)
 		}
@@ -47,7 +47,7 @@ func TestLoadAndparse(t *testing.T) {
 			Foo string `env:"FOO" default:"bar"`
 		}
 		myConfig := MyConfig{}
-		err := parse(&myConfig, "./testdata/.env.local")
+		err := Parse(&myConfig, "./testdata/.env.local")
 		if err != nil {
 			t.Error(err)
 		}
@@ -60,7 +60,7 @@ func TestLoadAndparse(t *testing.T) {
 		}
 		myConfig := MyConfig{}
 		os.Setenv("FOO", "PreExistingValue")
-		err := parse(&myConfig, ".env")
+		err := Parse(&myConfig, ".env")
 		if err != nil {
 			t.Error(err)
 		}
@@ -85,7 +85,7 @@ func TestLoadAndparse(t *testing.T) {
 
 		os.Setenv("TIMEOUT", "3s")
 
-		err := parse(&myConfig, "testdata/.env.complex")
+		err := Parse(&myConfig, "testdata/.env.complex")
 		if err != nil {
 			t.Error(err)
 		}
@@ -129,7 +129,7 @@ func TestLoadAndparse(t *testing.T) {
 	})
 }
 
-func Testparse(t *testing.T) {
+func TestParse(t *testing.T) {
 	t.Run("all_defaults", func(t *testing.T) {
 		cleanEnv()
 		type MyConfig struct {
@@ -139,7 +139,7 @@ func Testparse(t *testing.T) {
 			Timeout     time.Duration `env:"TIMEOUT" default:"5s"`
 		}
 		myConfig := MyConfig{}
-		err := parse(&myConfig, "testdata/.env.empty")
+		err := Parse(&myConfig, "testdata/.env.empty")
 		if err != nil {
 			t.Error(err)
 		}
@@ -166,7 +166,7 @@ func Testparse(t *testing.T) {
 		myConfig := MyConfig{}
 		os.Setenv("ENV", "production")
 		os.Setenv("DEBUG", "true")
-		err := parse(&myConfig, "testdata/.env.empty")
+		err := Parse(&myConfig, "testdata/.env.empty")
 		if err != nil {
 			t.Error(err)
 		}
@@ -187,7 +187,7 @@ func Testparse(t *testing.T) {
 		myConfig := MyConfig{}
 		os.Setenv("TIMEOUT_SECS", "23s")
 		os.Setenv("TIMEOUT_MINS", "45m")
-		err := parse(&myConfig, "testdata/.env.empty")
+		err := Parse(&myConfig, "testdata/.env.empty")
 		if err != nil {
 			t.Error(err)
 		}
@@ -206,7 +206,7 @@ func Testparse(t *testing.T) {
 		}
 		myConfig := MyConfig{}
 		os.Setenv("ENV", "production")
-		err := parse(&myConfig, "testdata/.env.empty")
+		err := Parse(&myConfig, "testdata/.env.empty")
 		if err != nil {
 			t.Error(err)
 		}
@@ -222,7 +222,7 @@ func Testparse(t *testing.T) {
 			Port int    `env:"PORT"`
 		}
 		myConfig := MyConfig{}
-		err := parse(&myConfig, "testdata/.env.empty")
+		err := Parse(&myConfig, "testdata/.env.empty")
 		want := "missing env var PORT (no default provided)"
 		if err.Error() != want {
 			t.Errorf("want error %q, got %q", want, err)
@@ -236,7 +236,7 @@ func Testparse(t *testing.T) {
 		}
 		myConfig := MyConfig{}
 		os.Setenv("PORT", "hello")
-		err := parse(&myConfig, "testdata/.env.empty")
+		err := Parse(&myConfig, "testdata/.env.empty")
 		want := "cannot parse hello as int"
 		if !strings.Contains(err.Error(), want) {
 			t.Errorf("want error to contain %q, got %q", want, err)
@@ -250,7 +250,7 @@ func Testparse(t *testing.T) {
 		}
 		myConfig := MyConfig{}
 		os.Setenv("DEBUG", "hello")
-		err := parse(&myConfig, "testdata/.env.empty")
+		err := Parse(&myConfig, "testdata/.env.empty")
 		want := "cannot parse hello as bool"
 		if !strings.Contains(err.Error(), want) {
 			t.Errorf("want error to contain %q, got %q", want, err)
@@ -264,7 +264,7 @@ func Testparse(t *testing.T) {
 		}
 		myConfig := MyConfig{}
 		os.Setenv("TIMEOUT", "hello")
-		err := parse(&myConfig, "testdata/.env.empty")
+		err := Parse(&myConfig, "testdata/.env.empty")
 		want := "cannot parse hello as time.Duration"
 		if !strings.Contains(err.Error(), want) {
 			t.Errorf("want error to contain %q, got %q", want, err)

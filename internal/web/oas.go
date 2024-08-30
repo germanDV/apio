@@ -1,4 +1,4 @@
-package main
+package web
 
 import (
 	"net/http"
@@ -9,11 +9,11 @@ import (
 	"github.com/getkin/kin-openapi/openapi3"
 )
 
-func setupOpenApiSpec(oas *rest.API) (http.Handler, error) {
-	oas.StripPkgPaths = []string{"main", "github.com/germandv/apio/internal"}
+func (api *Api) setupOpenApiSpec() (http.Handler, error) {
+	api.oas.StripPkgPaths = []string{"main", "github.com/germandv/apio/internal"}
 
 	// Common error response to all routes.
-	for _, rr := range oas.Routes {
+	for _, rr := range api.oas.Routes {
 		for _, op := range rr {
 			op.HasResponseModel(http.StatusUnauthorized, rest.ModelOf[errs.ErrResp]())
 			op.HasResponseModel(http.StatusTooManyRequests, rest.ModelOf[errs.ErrResp]())
@@ -21,7 +21,7 @@ func setupOpenApiSpec(oas *rest.API) (http.Handler, error) {
 		}
 	}
 
-	spec, err := oas.Spec()
+	spec, err := api.oas.Spec()
 	if err != nil {
 		return nil, err
 	}

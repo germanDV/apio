@@ -48,6 +48,14 @@ func (af ApiFunc) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		case errors.Is(err, errs.ErrNoPermission):
 			errMsg = err.Error()
 			status = http.StatusForbidden
+		case errors.Is(err, errs.ErrDuplicateTag):
+			errMsg = err.Error()
+			status = http.StatusConflict
+		case errors.Is(err, errs.ErrInvalidID):
+		case errors.Is(err, errs.ErrMaxLen):
+		case errors.Is(err, errs.ErrTagNotFound):
+			errMsg = err.Error()
+			status = http.StatusBadRequest
 		default:
 			errMsg = "internal server error" // overwrite error message to avoid leaking internal details.
 			status = http.StatusInternalServerError

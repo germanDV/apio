@@ -16,6 +16,8 @@ type AppConfig struct {
 	AuthPublKey string `env:"AUTH_PUBLIC_KEY"`
 	// Private key for JWT signing.
 	AuthPrivKey string `env:"AUTH_PRIVATE_KEY"`
+	// Connection string to the Postgres database.
+	PostgresConnStr string `env:"POSTGRES_CONN_STR"`
 }
 
 var appConfig AppConfig
@@ -26,7 +28,7 @@ func init() {
 		envFile = ".env"
 	}
 
-	err := parse(&appConfig, envFile)
+	err := Parse(&appConfig, envFile)
 	if err != nil {
 		panic(err)
 	}

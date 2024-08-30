@@ -121,3 +121,27 @@ func unauthorized(w http.ResponseWriter, r *http.Request, logger *slog.Logger) {
 		"err", "missing or invalid JWT",
 	)
 }
+
+// RequireUser is a middleware that ensures the user is authenticated.
+func RequireUser(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		u, err := GetUser(r.Context())
+		if err != nil || u.ID == "" {
+			WriteJSON(w, Envelope{"error": "requires authenticated user"}, http.StatusUnauthorized)
+			return
+		}
+		next.ServeHTTP(w, r)
+	})
+}
+
+// RequireAdmin is a middleware that ensures the user is authenticated and has admin role.
+func RequireAdmin(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		u, err := GetUser(r.Context())
+		if err != nil || u.ID == "" || u.Role != "admin" {
+			WriteJSON(w, Envelope{"error": "admin only"}, http.StatusForbidden)
+			return
+		}
+		next.ServeHTTP(w, r)
+	})
+}

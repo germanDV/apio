@@ -17,7 +17,7 @@ var (
 	errNoGoModFile     = errors.New("could not find go.mod file")
 )
 
-// parse takes a pointer to a struct and uses the 'env' and 'default'
+// Parse takes a pointer to a struct and uses the 'env' and 'default'
 // struct tags to populate it with values from environment variables.
 //
 // Before reading from environment variables, it will load the env file
@@ -33,7 +33,7 @@ var (
 //
 // Supported types are: string, int, bool and time.Duration.
 // Nested structs are not supported.
-func parse[T any](configStruct *T, configFilepath string) error {
+func Parse[T any](configStruct *T, configFilepath string) error {
 	err := fileToEnv(configFilepath)
 	// "env file not found" and "no go.mod" are ignored as these are common cases on cloud.
 	if err != nil && !errors.Is(err, errEnvFileNotFound) && !errors.Is(err, errNoGoModFile) {
@@ -168,7 +168,7 @@ func getRootPath(path string) (string, error) {
 	switch _, err := os.Stat(filepath.Join(path, "go.mod")); {
 	case err == nil:
 		return path, nil
-	case err != nil && !errors.Is(err, os.ErrNotExist):
+	case !errors.Is(err, os.ErrNotExist):
 		return "", err
 	default:
 		return getRootPath(filepath.Join(path, ".."))
