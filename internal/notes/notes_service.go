@@ -24,51 +24,26 @@ func NewService(repo Repository) *Service {
 }
 
 func (s *Service) Create(title, content string, tagIDs []string, createdAt time.Time) (id.ID, error) {
-	noteTitle, err := ParseTitle(title)
+	n, err := FromReq(title, content, tagIDs, createdAt)
 	if err != nil {
 		return id.Zero(), err
 	}
 
-	noteContent, err := ParseContent(content)
-	if err != nil {
-		return id.Zero(), err
-	}
-
-	uid := id.New()
-	note := NoteAggregate{
-		NoteEntity: NoteEntity{
-			ID:        uid,
-			Title:     noteTitle,
-			Content:   noteContent,
-			CreatedAt: createdAt,
-			UpdatedAt: createdAt,
-		},
-	}
-
-	noteTags := make([]NoteTagEntity, 0, len(tagIDs))
-	for _, t := range tagIDs {
-		tagID, err := id.Parse(t)
-		if err != nil {
-			return id.Zero(), err
-		}
-		noteTags = append(noteTags, NoteTagEntity{ID: tagID, Name: ""})
-	}
-
-	allTagsFound, err := s.repo.TagsExist(noteTags)
+	// All Tags must be created in advance.
+	allTagsFound, err := s.repo.TagsExist(n.Tags)
 	if err != nil {
 		return id.Zero(), err
 	}
 	if !allTagsFound {
 		return id.Zero(), errs.ErrTagNotFound
 	}
-	note.Tags = noteTags
 
-	err = s.repo.Save(note)
+	err = s.repo.Save(n)
 	if err != nil {
 		return id.Zero(), err
 	}
 
-	return uid, nil
+	return n.ID, nil
 }
 
 func (s *Service) GetAll() ([]NoteAggregate, error) {

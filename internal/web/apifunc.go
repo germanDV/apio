@@ -54,6 +54,8 @@ func (af ApiFunc) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		case errors.Is(err, errs.ErrInvalidID):
 		case errors.Is(err, errs.ErrMaxLen):
 		case errors.Is(err, errs.ErrTagNotFound):
+		case errors.Is(err, errs.ErrEmptyTitle):
+		case errors.Is(err, errs.ErrEmptyName):
 			errMsg = err.Error()
 			status = http.StatusBadRequest
 		default:

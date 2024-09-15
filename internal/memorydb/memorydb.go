@@ -1,7 +1,6 @@
 package memorydb
 
 import (
-	"fmt"
 	"maps"
 	"slices"
 	"sync"
@@ -65,8 +64,6 @@ func (db *DB) SaveTag(id string, name string) error {
 func (db *DB) GetTags() ([]TagRow, error) {
 	db.mu.RLock()
 	defer db.mu.RUnlock()
-	fmt.Printf("notes: %v\n", db.data.notes)
-	fmt.Printf("tags: %v\n", db.data.tags)
 	return slices.Collect(maps.Values(db.data.tags)), nil
 }
 
@@ -106,9 +103,6 @@ func (db *DB) GetNoteTags(id string) ([]TagRow, error) {
 	db.mu.RLock()
 	defer db.mu.RUnlock()
 
-	fmt.Printf("notes: %v\n", db.data.notes)
-	fmt.Printf("tags: %v\n", db.data.tags)
-
 	rows := slices.DeleteFunc(slices.Clone(db.data.note_tags), func(r NoteTagRow) bool {
 		return r.NoteID != id
 	})
@@ -116,9 +110,7 @@ func (db *DB) GetNoteTags(id string) ([]TagRow, error) {
 	ts := make([]TagRow, 0, len(rows))
 	for _, row := range rows {
 		tag, ok := db.data.tags[row.TagID]
-		if !ok {
-			fmt.Println("tag not found")
-		} else {
+		if ok {
 			ts = append(ts, tag)
 		}
 	}

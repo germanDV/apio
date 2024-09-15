@@ -1,9 +1,6 @@
 package memorydb
 
 import (
-	"fmt"
-
-	"github.com/germandv/apio/internal/id"
 	"github.com/germandv/apio/internal/notes"
 	"github.com/germandv/apio/internal/tools"
 )
@@ -51,50 +48,31 @@ func (r *NotesRepository) List() ([]notes.NoteAggregate, error) {
 	}
 
 	entries := make([]notes.NoteAggregate, 0, len(rows))
+
 	for _, row := range rows {
 		tagRows, err := r.db.GetNoteTags(row.ID)
 		if err != nil {
 			return nil, err
 		}
 
-		corruptedTags := make([]TagRow, 0)
-		tags := tools.Map(tagRows, func(t TagRow) notes.NoteTagEntity {
-			uid, err := id.Parse(t.ID)
-			if err != nil {
-				corruptedTags = append(corruptedTags, t)
-				return notes.NoteTagEntity{ID: id.Zero(), Name: ""}
+		mappedTags := tools.Map(tagRows, func(t TagRow) struct {
+			ID   string
+			Name string
+		} {
+			return struct {
+				ID   string
+				Name string
+			}{
+				ID:   t.ID,
+				Name: t.Name,
 			}
-			return notes.NoteTagEntity{ID: uid, Name: t.Name}
 		})
-		if len(corruptedTags) > 0 {
-			return nil, fmt.Errorf("corrupted data, could not parse one ore more tag row %v", corruptedTags)
-		}
 
-		uid, err := id.Parse(row.ID)
+		n, err := notes.FromDB(row.ID, row.Title, row.Content, row.CreatedAt, row.UpdatedAt, mappedTags)
 		if err != nil {
 			return nil, err
 		}
-
-		title, err := notes.ParseTitle(row.Title)
-		if err != nil {
-			return nil, err
-		}
-
-		content, err := notes.ParseContent(row.Content)
-		if err != nil {
-			return nil, err
-		}
-
-		entries = append(entries, notes.NoteAggregate{
-			NoteEntity: notes.NoteEntity{
-				ID:        uid,
-				Title:     title,
-				Content:   content,
-				CreatedAt: row.CreatedAt,
-				UpdatedAt: row.UpdatedAt,
-			},
-			Tags: tags,
-		})
+		entries = append(entries, n)
 	}
 
 	return entries, nil

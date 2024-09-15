@@ -9,7 +9,7 @@ import (
 )
 
 const (
-	minTitleLength   = 1
+	minTitleLength   = 2
 	maxTitleLength   = 64
 	maxContentLength = 2_000
 )

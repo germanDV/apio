@@ -19,22 +19,17 @@ func NewService(repo Repository) *Service {
 }
 
 func (s *Service) Create(name string) (id.ID, error) {
-	tagName, err := ParseName(name)
+	t, err := FromReq(name)
 	if err != nil {
 		return id.Zero(), err
 	}
 
-	uid := id.New()
-	tag := TagAggregate{
-		TagEntity: TagEntity{ID: uid, Name: tagName},
-	}
-
-	err = s.repo.Save(tag)
+	err = s.repo.Save(t)
 	if err != nil {
 		return id.Zero(), err
 	}
 
-	return uid, nil
+	return t.ID, nil
 }
 
 func (s *Service) GetAll() ([]TagAggregate, error) {

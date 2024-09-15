@@ -1,7 +1,6 @@
 package memorydb
 
 import (
-	"github.com/germandv/apio/internal/id"
 	"github.com/germandv/apio/internal/tags"
 )
 
@@ -29,19 +28,11 @@ func (r *TagsRepository) List() ([]tags.TagAggregate, error) {
 
 	entries := make([]tags.TagAggregate, 0, len(rows))
 	for _, row := range rows {
-		uid, err := id.Parse(row.ID)
+		t, err := tags.FromDB(row.ID, row.Name)
 		if err != nil {
 			return nil, err
 		}
-
-		name, err := tags.ParseName(row.Name)
-		if err != nil {
-			return nil, err
-		}
-
-		entries = append(entries, tags.TagAggregate{
-			TagEntity: tags.TagEntity{ID: uid, Name: name},
-		})
+		entries = append(entries, t)
 	}
 
 	return entries, nil
