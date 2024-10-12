@@ -12,6 +12,7 @@ import (
 	"time"
 
 	"github.com/a-h/rest"
+	"github.com/germandv/apio/internal/cache"
 	"github.com/germandv/apio/internal/config"
 	"github.com/germandv/apio/internal/notes"
 	"github.com/germandv/apio/internal/tags"
@@ -35,13 +36,15 @@ func New(
 	oas *rest.API,
 	tagSvc tags.IService,
 	noteSvc notes.IService,
+	cacheClient cache.Client,
 ) *Api {
 	cfg := config.Get()
 	mux := &http.ServeMux{}
+	limiter := newRateLimiter(cacheClient, 50, time.Minute)
 
 	server := &http.Server{
 		Addr:              fmt.Sprintf(":%d", cfg.Port),
-		Handler:           middleware(mux, logger, auth),
+		Handler:           middleware(mux, logger, auth, limiter),
 		IdleTimeout:       1 * time.Minute,
 		ReadHeaderTimeout: 5 * time.Second,
 		ReadTimeout:       10 * time.Second,

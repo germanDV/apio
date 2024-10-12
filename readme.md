@@ -4,7 +4,7 @@ Template for JSON-HTTP APIs.
 
 Features:
 - [X] Auth with JWT, including RBAC for two simple roles: _user_ and _admin_.
-- [ ] IP rate limiting using Redis (Retry-After header).
+- [x] IP rate limiting using Redis.
 - [X] Data persistence using Postgres, including migrations.
 - [X] _.env_ file support.
 - [X] OpenAPI 3 docs and Swagger UI.

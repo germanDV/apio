@@ -3,6 +3,7 @@ package main
 import (
 	"github.com/a-h/rest"
 
+	"github.com/germandv/apio/internal/cache/memorycache"
 	"github.com/germandv/apio/internal/config"
 	"github.com/germandv/apio/internal/logger"
 	"github.com/germandv/apio/internal/memorydb"
@@ -25,6 +26,11 @@ func main() {
 		panic(err)
 	}
 
+	cacheClient, err := memorycache.New()
+	if err != nil {
+		panic(err)
+	}
+
 	// dbPool, err := db.InitWithConnStr(cfg.PostgresConnStr)
 	// if err != nil {
 	// 	panic(err)
@@ -34,7 +40,7 @@ func main() {
 	noteSvc := notes.NewService(memorydb.NewNotesRepository())
 
 	oas := rest.NewAPI("apio")
-	api := web.New(logger, auth, oas, tagSvc, noteSvc)
+	api := web.New(logger, auth, oas, tagSvc, noteSvc, cacheClient)
 
 	api.ListenAndServe()
 }

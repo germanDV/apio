@@ -2,10 +2,12 @@ package web
 
 import (
 	"context"
+	"errors"
 	"log/slog"
 	"net/http"
 	"strings"
 
+	"github.com/germandv/apio/internal/errs"
 	"github.com/germandv/apio/internal/tokenauth"
 )
 
@@ -16,7 +18,12 @@ var (
 )
 
 // middleware applies common middleware to all routes.
-func middleware(next http.Handler, logger *slog.Logger, auth tokenauth.Service) http.Handler {
+func middleware(
+	next http.Handler,
+	logger *slog.Logger,
+	auth tokenauth.Service,
+	limiter rateLimiter,
+) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		// Panic-recovery middleware.
 		// Recovers panics in other middlewares. It is not needed in API handlers as `ApiFunc` already calls `recover()`.
@@ -43,6 +50,20 @@ func middleware(next http.Handler, logger *slog.Logger, auth tokenauth.Service) 
 		}
 		if ip != "" {
 			r.RemoteAddr = ip
+		}
+
+		// IP-based rate limiter.
+		err := limiter.check(r.RemoteAddr)
+		if err != nil {
+			if errors.Is(err, errs.ErrTooManyRequests) {
+				logger.Info("too many requests", "ip", r.RemoteAddr, "err", err.Error())
+				w.Header().Set("Retry-After", "60")
+				http.Error(w, "too many requests", http.StatusTooManyRequests)
+				return
+			}
+			logger.Error("rate limiter internal error", "err", err.Error(), "ip", r.RemoteAddr)
+			http.Error(w, "internal server error", http.StatusInternalServerError)
+			return
 		}
 
 		// Add security headers.
