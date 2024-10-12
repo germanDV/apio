@@ -4,9 +4,11 @@ import (
 	"errors"
 	"slices"
 	"testing"
+	"time"
 
 	"github.com/germandv/apio/internal/errs"
 	"github.com/germandv/apio/internal/memorydb"
+	"github.com/germandv/apio/internal/notes"
 	"github.com/germandv/apio/internal/tags"
 )
 
@@ -42,9 +44,6 @@ func TestTagService(t *testing.T) {
 		ts, err := svc.GetAll()
 		if err != nil {
 			t.Fatalf("expected no error, got %s", err)
-		}
-		if len(ts) != 0 {
-			t.Fatalf("expected tags to be an empty slice, got %v", ts)
 		}
 
 		_, err = svc.Create("meditation")
@@ -82,6 +81,55 @@ func TestTagService(t *testing.T) {
 		}
 		if !errors.Is(err, errs.ErrDuplicateTag) {
 			t.Fatalf("expected error ErrDuplicateTag, got %s", err)
+		}
+	})
+
+	t.Run("get_tags_with_note_count", func(t *testing.T) {
+		t.Parallel()
+		noteSvc := notes.NewService(memorydb.NewNotesRepository())
+
+		goTagID, err := svc.Create("go")
+		if err != nil {
+			t.Fatalf("expected no error, got %s", err)
+		}
+
+		fooTagId, err := svc.Create("foo")
+		if err != nil {
+			t.Fatalf("expected no error, got %s", err)
+		}
+
+		_, err = noteSvc.Create("note one", "lorem ipsum", []string{goTagID.String()}, time.Now())
+		if err != nil {
+			t.Fatalf("expected no error, got %s", err)
+		}
+
+		_, err = noteSvc.Create("note two", "lorem ipsum", []string{goTagID.String()}, time.Now())
+		if err != nil {
+			t.Fatalf("expected no error, got %s", err)
+		}
+
+		ts, err := svc.GetAll()
+		if err != nil {
+			t.Fatalf("expected no error, got %s", err)
+		}
+
+		var goTag tags.TagAggregate
+		var fooTag tags.TagAggregate
+		for _, t := range ts {
+			if t.ID.String() == goTagID.String() {
+				goTag = t
+			}
+			if t.ID.String() == fooTagId.String() {
+				fooTag = t
+			}
+		}
+
+		if goTag.NoteCount != 2 {
+			t.Fatalf("expected tag to be in 2 note, got %d", goTag.NoteCount)
+		}
+
+		if fooTag.NoteCount != 0 {
+			t.Fatalf("expected foo tag to be in 0 notes, got %d", fooTag.NoteCount)
 		}
 	})
 }

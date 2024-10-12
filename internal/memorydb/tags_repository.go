@@ -28,10 +28,16 @@ func (r *TagsRepository) List() ([]tags.TagAggregate, error) {
 
 	entries := make([]tags.TagAggregate, 0, len(rows))
 	for _, row := range rows {
-		t, err := tags.FromDB(row.ID, row.Name)
+		noteCount, err := r.db.CountNotesByTag(row.ID)
 		if err != nil {
 			return nil, err
 		}
+
+		t, err := tags.FromDB(row.ID, row.Name, noteCount)
+		if err != nil {
+			return nil, err
+		}
+
 		entries = append(entries, t)
 	}
 

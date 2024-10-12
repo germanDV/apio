@@ -122,3 +122,17 @@ func (db *DB) CheckTagExistence(tagID string) (bool, error) {
 	_, ok := db.data.tags[tagID]
 	return ok, nil
 }
+
+func (db *DB) CountNotesByTag(tagID string) (int, error) {
+	db.mu.RLock()
+	defer db.mu.RUnlock()
+
+	count := 0
+	for _, r := range db.data.note_tags {
+		if r.TagID == tagID {
+			count++
+		}
+	}
+
+	return count, nil
+}

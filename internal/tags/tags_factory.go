@@ -19,7 +19,7 @@ func FromReq(reqName string) (TagAggregate, error) {
 }
 
 // FromDB produces a TagAggregate from data in the DB format.
-func FromDB(dbID string, dbName string) (TagAggregate, error) {
+func FromDB(dbID string, dbName string, noteCount int) (TagAggregate, error) {
 	uid, err := id.Parse(dbID)
 	if err != nil {
 		return TagAggregate{}, err
@@ -32,7 +32,7 @@ func FromDB(dbID string, dbName string) (TagAggregate, error) {
 
 	t := TagAggregate{
 		TagEntity: TagEntity{ID: uid, Name: name},
-		NoteCount: 0, // TODO: implement
+		NoteCount: noteCount,
 	}
 
 	return t, nil
