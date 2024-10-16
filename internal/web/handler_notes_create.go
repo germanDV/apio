@@ -28,13 +28,18 @@ func (api *Api) handleCreateNote() func(http.ResponseWriter, *http.Request) erro
 		HasRequestModel(rest.ModelOf[CreateNoteReq]())
 
 	return func(w http.ResponseWriter, r *http.Request) error {
-		body := CreateNoteReq{}
-		err := ReadJSON(w, r, &body)
+		user, err := GetUser(r.Context())
 		if err != nil {
 			return err
 		}
 
-		id, err := api.noteSvc.Create(body.Title, body.Content, body.TagIDs, time.Now().UTC())
+		body := CreateNoteReq{}
+		err = ReadJSON(w, r, &body)
+		if err != nil {
+			return err
+		}
+
+		id, err := api.noteSvc.Create(body.Title, body.Content, body.TagIDs, user.ID, time.Now().UTC())
 		if err != nil {
 			return err
 		}

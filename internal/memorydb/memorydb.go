@@ -18,6 +18,7 @@ type NoteRow struct {
 	ID        string
 	Title     string
 	Content   string
+	CreatedBy string
 	CreatedAt time.Time
 	UpdatedAt time.Time
 }
@@ -67,7 +68,7 @@ func (db *DB) GetTags() ([]TagRow, error) {
 	return slices.Collect(maps.Values(db.data.tags)), nil
 }
 
-func (db *DB) SaveNote(id, title, content string, createdAt, updatedAt time.Time) error {
+func (db *DB) SaveNote(id, title, content, createdBy string, createdAt, updatedAt time.Time) error {
 	db.mu.Lock()
 	defer db.mu.Unlock()
 
@@ -75,6 +76,7 @@ func (db *DB) SaveNote(id, title, content string, createdAt, updatedAt time.Time
 		ID:        id,
 		Title:     title,
 		Content:   content,
+		CreatedBy: createdBy,
 		CreatedAt: createdAt,
 		UpdatedAt: updatedAt,
 	}

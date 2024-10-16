@@ -124,7 +124,8 @@ func TestAPI(t *testing.T) {
 
 	// Create Note without Tag.
 	body := `{"title": "title_one", "content": "content_one"}`
-	r = httptest.NewRequest("POST", "/notes", strings.NewReader(body))
+	r = withUser(httptest.NewRequest("POST", "/notes", strings.NewReader(body)))
+	// r = r.WithContext(SetUser(r.Context(), CtxUser{ID: "01929799-70ee-7444-a4da-1db3b81251ce", Role: "user"}))
 	w = httptest.NewRecorder()
 	handler = api.handleCreateNote()
 
@@ -156,7 +157,7 @@ func TestAPI(t *testing.T) {
 		t.Fatalf("expected no error, got %s", err)
 	}
 
-	r = httptest.NewRequest("POST", "/notes", bytes.NewBuffer(jsonBody))
+	r = withUser(httptest.NewRequest("POST", "/notes", bytes.NewBuffer(jsonBody)))
 	w = httptest.NewRecorder()
 	handler = api.handleCreateNote()
 
@@ -215,4 +216,13 @@ func TestAPI(t *testing.T) {
 			}
 		}
 	}
+}
+
+// withUser adds a User with hardcoded values to the request context.
+func withUser(r *http.Request) *http.Request {
+	return r.WithContext(
+		SetUser(
+			r.Context(),
+			CtxUser{ID: "01929799-70ee-7444-a4da-1db3b81251ce", Role: "user"}),
+	)
 }

@@ -13,9 +13,10 @@ import (
 
 func TestFromReq(t *testing.T) {
 	content := tools.RandomStr(100)
+	createdBy := id.New().String()
 
 	t.Run("no_title", func(t *testing.T) {
-		_, err := FromReq("", content, []string{}, time.Now())
+		_, err := FromReq("", content, []string{}, createdBy, time.Now())
 		if err == nil {
 			t.Error("expected an error, got nil")
 		}
@@ -25,7 +26,7 @@ func TestFromReq(t *testing.T) {
 	})
 
 	t.Run("title_too_short", func(t *testing.T) {
-		_, err := FromReq(tools.RandomStr(minTitleLength-1), content, []string{}, time.Now())
+		_, err := FromReq(tools.RandomStr(minTitleLength-1), content, []string{}, createdBy, time.Now())
 		if err == nil {
 			t.Error("expected an error, got nil")
 		}
@@ -35,7 +36,7 @@ func TestFromReq(t *testing.T) {
 	})
 
 	t.Run("title_too_long", func(t *testing.T) {
-		_, err := FromReq(tools.RandomStr(maxTitleLength+1), content, []string{}, time.Now())
+		_, err := FromReq(tools.RandomStr(maxTitleLength+1), content, []string{}, createdBy, time.Now())
 		if err == nil {
 			t.Error("expected an error, got nil")
 		}
@@ -46,7 +47,7 @@ func TestFromReq(t *testing.T) {
 
 	t.Run("valid", func(t *testing.T) {
 		title := tools.RandomStr(minTitleLength + 4)
-		n, err := FromReq(title, content, []string{}, time.Now())
+		n, err := FromReq(title, content, []string{}, createdBy, time.Now())
 		if err != nil {
 			t.Errorf("expected nil error, got %v", err)
 		}
@@ -63,6 +64,8 @@ func TestFromReq(t *testing.T) {
 }
 
 func TestFromDB(t *testing.T) {
+	createdBy := id.New().String()
+
 	t.Run("tag_with_invalid_id", func(t *testing.T) {
 		dbTags := []struct {
 			ID   string
@@ -72,7 +75,7 @@ func TestFromDB(t *testing.T) {
 			{ID: "invalid-id", Name: tools.RandomStr(4)},
 		}
 
-		_, err := FromDB(id.New().String(), "title", "content", time.Now(), time.Now(), dbTags)
+		_, err := FromDB(id.New().String(), "title", "content", createdBy, time.Now(), time.Now(), dbTags)
 		if err == nil {
 			t.Error("expected an error, got nil")
 		}
@@ -90,7 +93,7 @@ func TestFromDB(t *testing.T) {
 			{ID: id.New().String(), Name: tools.RandomStr(4)},
 		}
 
-		n, err := FromDB(id.New().String(), "title", "content", time.Now(), time.Now(), dbTags)
+		n, err := FromDB(id.New().String(), "title", "content", createdBy, time.Now(), time.Now(), dbTags)
 		if err != nil {
 			t.Errorf("expected nil error, got %v", err)
 		}

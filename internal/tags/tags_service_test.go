@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/germandv/apio/internal/errs"
+	"github.com/germandv/apio/internal/id"
 	"github.com/germandv/apio/internal/memorydb"
 	"github.com/germandv/apio/internal/notes"
 	"github.com/germandv/apio/internal/tags"
@@ -15,6 +16,7 @@ import (
 func TestTagService(t *testing.T) {
 	repo := memorydb.NewTagsRepository()
 	svc := tags.NewService(repo)
+	createdBy := id.New().String()
 
 	t.Run("name_missing", func(t *testing.T) {
 		t.Parallel()
@@ -98,12 +100,12 @@ func TestTagService(t *testing.T) {
 			t.Fatalf("expected no error, got %s", err)
 		}
 
-		_, err = noteSvc.Create("note one", "lorem ipsum", []string{goTagID.String()}, time.Now())
+		_, err = noteSvc.Create("note one", "lorem ipsum", []string{goTagID.String()}, createdBy, time.Now())
 		if err != nil {
 			t.Fatalf("expected no error, got %s", err)
 		}
 
-		_, err = noteSvc.Create("note two", "lorem ipsum", []string{goTagID.String()}, time.Now())
+		_, err = noteSvc.Create("note two", "lorem ipsum", []string{goTagID.String()}, createdBy, time.Now())
 		if err != nil {
 			t.Fatalf("expected no error, got %s", err)
 		}

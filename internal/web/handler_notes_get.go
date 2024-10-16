@@ -18,6 +18,7 @@ type Note struct {
 	ID        string    `json:"id"`
 	Title     string    `json:"title"`
 	Content   string    `json:"content"`
+	CreatedBy string    `json:"created_by"`
 	CreatedAt time.Time `json:"created_at"`
 	UpdatedAt time.Time `json:"updated_at"`
 	Tags      []NoteTag `json:"tags"`
@@ -50,6 +51,7 @@ func (api *Api) handleGetNotes() func(http.ResponseWriter, *http.Request) error 
 				ID:        n.ID.String(),
 				Title:     n.Title.String(),
 				Content:   n.Content.String(),
+				CreatedBy: n.CreatedBy.String(),
 				CreatedAt: n.CreatedAt,
 				UpdatedAt: n.UpdatedAt,
 				Tags:      tags,

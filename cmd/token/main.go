@@ -17,6 +17,16 @@ func main() {
 	userID := os.Args[1]
 	role := os.Args[2]
 
+	if userID == "" {
+		fmt.Println("using hardcoded user ID")
+		userID = "01929796-284c-7cab-9915-512e94297234"
+	}
+
+	if role == "" {
+		fmt.Println("using `user` role")
+		role = "user"
+	}
+
 	cfg := config.Get()
 	tokenService, err := tokenauth.New(cfg.AuthPrivKey, cfg.AuthPublKey)
 	if err != nil {

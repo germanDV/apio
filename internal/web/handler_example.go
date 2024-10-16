@@ -1,5 +1,7 @@
 package web
 
+// TODO: delete this file when examples are no longer needed.
+
 import (
 	"log/slog"
 	"net/http"

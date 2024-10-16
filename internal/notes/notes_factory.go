@@ -9,7 +9,13 @@ import (
 )
 
 // FromReq produces a NoteAggregate from a Request.
-func FromReq(title, content string, tagIDs []string, createdAt time.Time) (NoteAggregate, error) {
+func FromReq(
+	title string,
+	content string,
+	tagIDs []string,
+	createdBy string,
+	createdAt time.Time,
+) (NoteAggregate, error) {
 	noteTitle, err := ParseTitle(title)
 	if err != nil {
 		return NoteAggregate{}, err
@@ -20,12 +26,18 @@ func FromReq(title, content string, tagIDs []string, createdAt time.Time) (NoteA
 		return NoteAggregate{}, err
 	}
 
+	creatorID, err := id.Parse(createdBy)
+	if err != nil {
+		return NoteAggregate{}, err
+	}
+
 	uid := id.New()
 
 	noteEntity := NoteEntity{
 		ID:        uid,
 		Title:     noteTitle,
 		Content:   noteContent,
+		CreatedBy: creatorID,
 		CreatedAt: createdAt,
 		UpdatedAt: createdAt,
 	}
@@ -52,6 +64,7 @@ func FromDB(
 	dbID string,
 	dbTitle string,
 	dbContent string,
+	dbCreatedBy string,
 	dbCreatedAt time.Time,
 	dbUpdatedAt time.Time,
 	dbTags []struct {
@@ -74,10 +87,16 @@ func FromDB(
 		return NoteAggregate{}, err
 	}
 
+	creatorID, err := id.Parse(dbCreatedBy)
+	if err != nil {
+		return NoteAggregate{}, err
+	}
+
 	noteEntity := NoteEntity{
 		ID:        uid,
 		Title:     title,
 		Content:   content,
+		CreatedBy: creatorID,
 		CreatedAt: dbCreatedAt,
 		UpdatedAt: dbUpdatedAt,
 	}

@@ -9,7 +9,7 @@ import (
 
 // IService defines the interface that a Note Service must implement.
 type IService interface {
-	Create(title, content string, tagIDs []string, createdAt time.Time) (id.ID, error)
+	Create(title string, content string, tagIDs []string, createdBy string, createdAt time.Time) (id.ID, error)
 	GetAll() ([]NoteAggregate, error)
 }
 
@@ -23,8 +23,8 @@ func NewService(repo Repository) *Service {
 	return &Service{repo: repo}
 }
 
-func (s *Service) Create(title, content string, tagIDs []string, createdAt time.Time) (id.ID, error) {
-	n, err := FromReq(title, content, tagIDs, createdAt)
+func (s *Service) Create(title string, content string, tagIDs []string, createdBy string, createdAt time.Time) (id.ID, error) {
+	n, err := FromReq(title, content, tagIDs, createdBy, createdAt)
 	if err != nil {
 		return id.Zero(), err
 	}

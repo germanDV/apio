@@ -22,6 +22,7 @@ func (r *NotesRepository) Save(note notes.NoteAggregate) error {
 		note.ID.String(),
 		note.Title.String(),
 		note.Content.String(),
+		note.CreatedBy.String(),
 		note.CreatedAt,
 		note.UpdatedAt,
 	)
@@ -68,7 +69,7 @@ func (r *NotesRepository) List() ([]notes.NoteAggregate, error) {
 			}
 		})
 
-		n, err := notes.FromDB(row.ID, row.Title, row.Content, row.CreatedAt, row.UpdatedAt, mappedTags)
+		n, err := notes.FromDB(row.ID, row.Title, row.Content, row.CreatedBy, row.CreatedAt, row.UpdatedAt, mappedTags)
 		if err != nil {
 			return nil, err
 		}

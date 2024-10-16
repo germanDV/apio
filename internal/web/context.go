@@ -25,3 +25,8 @@ func GetUser(ctx context.Context) (CtxUser, error) {
 	}
 	return u, nil
 }
+
+// SetUser sets the user in the request context.
+func SetUser(ctx context.Context, u CtxUser) context.Context {
+	return context.WithValue(ctx, ctxUserKey, u)
+}

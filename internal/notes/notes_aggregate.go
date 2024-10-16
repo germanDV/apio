@@ -11,6 +11,7 @@ type NoteEntity struct {
 	ID        id.ID
 	Title     Title
 	Content   Content
+	CreatedBy id.ID
 	CreatedAt time.Time
 	UpdatedAt time.Time
 }
