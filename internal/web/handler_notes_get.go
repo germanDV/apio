@@ -28,7 +28,7 @@ type GetNotesRes struct {
 	Notes []Note `json:"notes"`
 }
 
-func (api *Api) handleGetNotes() func(http.ResponseWriter, *http.Request) error {
+func (api *API) handleGetNotes() func(http.ResponseWriter, *http.Request) error {
 	api.oas.Get("/notes").
 		HasTags([]string{"Notes"}).
 		HasOperationID("getNotes").

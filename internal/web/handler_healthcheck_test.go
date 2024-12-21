@@ -15,7 +15,7 @@ func TestHealthcheck(t *testing.T) {
 	oas := rest.NewAPI("apio_test")
 	logger := slog.New(slog.NewJSONHandler(io.Discard, nil))
 
-	api := &Api{
+	api := &API{
 		oas:    oas,
 		logger: logger,
 	}

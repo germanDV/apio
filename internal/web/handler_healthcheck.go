@@ -14,7 +14,7 @@ type healthcheckResp struct {
 	Revision  string `json:"revision"`
 }
 
-func (api *Api) handleHealthcheck() func(http.ResponseWriter, *http.Request) error {
+func (api *API) handleHealthcheck() func(http.ResponseWriter, *http.Request) error {
 	api.oas.Get("/healthcheck").
 		HasResponseModel(http.StatusOK, rest.ModelOf[healthcheckResp]()).
 		HasTags([]string{"Observability"}).

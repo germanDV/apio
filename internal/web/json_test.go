@@ -131,7 +131,7 @@ func TestReadJSON(t *testing.T) {
 }
 
 func TestWriteJSON(t *testing.T) {
-	t.Run("write a successfull response", func(t *testing.T) {
+	t.Run("write a successful response", func(t *testing.T) {
 		t.Parallel()
 		w := httptest.NewRecorder()
 		data := Envelope{"message": "foo"}

@@ -27,7 +27,10 @@ func WriteJSON(w http.ResponseWriter, data any, status int) {
 
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(status)
-	w.Write(encoded)
+	_, err = w.Write(encoded)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+	}
 }
 
 // ReadJSON decodes r.Body into the destination pointed to by `dst` and handles possible errors.

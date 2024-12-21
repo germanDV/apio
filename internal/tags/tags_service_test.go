@@ -43,7 +43,7 @@ func TestTagService(t *testing.T) {
 	t.Run("create_and_retrieve_tags", func(t *testing.T) {
 		t.Parallel()
 
-		ts, err := svc.GetAll()
+		_, err := svc.GetAll()
 		if err != nil {
 			t.Fatalf("expected no error, got %s", err)
 		}
@@ -58,7 +58,7 @@ func TestTagService(t *testing.T) {
 			t.Fatalf("expected no error, got %s", err)
 		}
 
-		ts, err = svc.GetAll()
+		ts, err := svc.GetAll()
 		if err != nil {
 			t.Fatalf("expected no error, got %s", err)
 		}
@@ -95,7 +95,7 @@ func TestTagService(t *testing.T) {
 			t.Fatalf("expected no error, got %s", err)
 		}
 
-		fooTagId, err := svc.Create("foo")
+		fooTagID, err := svc.Create("foo")
 		if err != nil {
 			t.Fatalf("expected no error, got %s", err)
 		}
@@ -121,7 +121,7 @@ func TestTagService(t *testing.T) {
 			if t.ID.String() == goTagID.String() {
 				goTag = t
 			}
-			if t.ID.String() == fooTagId.String() {
+			if t.ID.String() == fooTagID.String() {
 				fooTag = t
 			}
 		}

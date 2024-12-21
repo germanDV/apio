@@ -15,7 +15,7 @@ type CreateTagRes struct {
 	ID string `json:"id"`
 }
 
-func (api *Api) handleCreateTag() func(http.ResponseWriter, *http.Request) error {
+func (api *API) handleCreateTag() func(http.ResponseWriter, *http.Request) error {
 	api.oas.Post("/tags").
 		HasTags([]string{"Tags"}).
 		HasOperationID("createTag").

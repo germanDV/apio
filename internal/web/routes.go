@@ -2,7 +2,7 @@ package web
 
 import "net/http"
 
-func (api *Api) routes() {
+func (api *API) routes() {
 	// API endpoints.
 	api.Route("GET /healthcheck", api.handleHealthcheck())
 	api.Route("POST /tags", api.handleCreateTag(), RequireUser)
@@ -11,7 +11,7 @@ func (api *Api) routes() {
 	api.Route("GET /notes", api.handleGetNotes(), RequireUser)
 
 	// Handlers for Swagger UI.
-	oasUIHandler, err := api.setupOpenApiSpec()
+	oasUIHandler, err := api.setupOpenAPISpec()
 	if err != nil {
 		panic(err)
 	}

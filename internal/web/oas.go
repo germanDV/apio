@@ -9,7 +9,7 @@ import (
 	"github.com/getkin/kin-openapi/openapi3"
 )
 
-func (api *Api) setupOpenApiSpec() (http.Handler, error) {
+func (api *API) setupOpenAPISpec() (http.Handler, error) {
 	api.oas.StripPkgPaths = []string{"main", "github.com/germandv/apio/internal"}
 
 	// Common error response to all routes.

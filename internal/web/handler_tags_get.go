@@ -16,7 +16,7 @@ type GetTagsRes struct {
 	Tags []Tag `json:"tags"`
 }
 
-func (api *Api) handleGetTags() func(http.ResponseWriter, *http.Request) error {
+func (api *API) handleGetTags() func(http.ResponseWriter, *http.Request) error {
 	api.oas.Get("/tags").
 		HasTags([]string{"Tags"}).
 		HasOperationID("getTags").

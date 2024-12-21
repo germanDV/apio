@@ -34,7 +34,7 @@ MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEUOu0Nc9/EiVSyBKyfvv38MlteRWA
 -----END PUBLIC KEY-----`
 )
 
-var api *Api
+var api *API
 
 func TestMain(m *testing.M) {
 	// Before tests.
@@ -81,7 +81,12 @@ func TestAPI(t *testing.T) {
 	}
 
 	tagOneRes := CreateTagRes{}
-	json.Unmarshal(w.Body.Bytes(), &tagOneRes)
+
+	err = json.Unmarshal(w.Body.Bytes(), &tagOneRes)
+	if err != nil {
+		t.Fatalf("expected no error, got %s", err)
+	}
+
 	_, err = id.Parse(tagOneRes.ID)
 	if err != nil {
 		t.Fatalf("expected no error, got %s", err)
@@ -90,13 +95,18 @@ func TestAPI(t *testing.T) {
 	// Create a second Tag.
 	r = httptest.NewRequest("POST", "/tags", strings.NewReader(`{"name":"zen"}`))
 	w = httptest.NewRecorder()
-	handler(w, r)
+	err = handler(w, r)
 	if err != nil {
 		t.Fatalf("expected no error, got %s", err)
 	}
 
 	tagTwoRes := CreateTagRes{}
-	json.Unmarshal(w.Body.Bytes(), &tagTwoRes)
+
+	err = json.Unmarshal(w.Body.Bytes(), &tagTwoRes)
+	if err != nil {
+		t.Fatalf("expected no error, got %s", err)
+	}
+
 	_, err = id.Parse(tagTwoRes.ID)
 	if err != nil {
 		t.Fatalf("expected no error, got %s", err)
@@ -117,7 +127,12 @@ func TestAPI(t *testing.T) {
 	}
 
 	getTagsRes := GetTagsRes{}
-	json.Unmarshal(w.Body.Bytes(), &getTagsRes)
+
+	err = json.Unmarshal(w.Body.Bytes(), &getTagsRes)
+	if err != nil {
+		t.Fatalf("expected no error, got %s", err)
+	}
+
 	if len(getTagsRes.Tags) != 2 {
 		t.Fatalf("expected 2 tag, got %d", len(getTagsRes.Tags))
 	}
@@ -139,7 +154,12 @@ func TestAPI(t *testing.T) {
 	}
 
 	noteWithoutTagsRes := CreateNoteRes{}
-	json.Unmarshal(w.Body.Bytes(), &noteWithoutTagsRes)
+
+	err = json.Unmarshal(w.Body.Bytes(), &noteWithoutTagsRes)
+	if err != nil {
+		t.Fatalf("expected no error, got %s", err)
+	}
+
 	_, err = id.Parse(noteWithoutTagsRes.ID)
 	if err != nil {
 		t.Fatalf("expected no error, got %s", err)
@@ -171,7 +191,12 @@ func TestAPI(t *testing.T) {
 	}
 
 	noteWithTagsRes := CreateNoteRes{}
-	json.Unmarshal(w.Body.Bytes(), &noteWithTagsRes)
+
+	err = json.Unmarshal(w.Body.Bytes(), &noteWithTagsRes)
+	if err != nil {
+		t.Fatalf("expected no error, got %s", err)
+	}
+
 	_, err = id.Parse(noteWithTagsRes.ID)
 	if err != nil {
 		t.Fatalf("expected no error, got %s", err)
@@ -192,7 +217,12 @@ func TestAPI(t *testing.T) {
 	}
 
 	getNotesRes := GetNotesRes{}
-	json.Unmarshal(w.Body.Bytes(), &getNotesRes)
+
+	err = json.Unmarshal(w.Body.Bytes(), &getNotesRes)
+	if err != nil {
+		t.Fatalf("expected no error, got %s", err)
+	}
+
 	if len(getNotesRes.Notes) != 2 {
 		t.Fatalf("expected 2 notes, got %d", len(getNotesRes.Notes))
 	}

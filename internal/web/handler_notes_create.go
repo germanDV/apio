@@ -18,7 +18,7 @@ type CreateNoteRes struct {
 	ID string `json:"id"`
 }
 
-func (api *Api) handleCreateNote() func(http.ResponseWriter, *http.Request) error {
+func (api *API) handleCreateNote() func(http.ResponseWriter, *http.Request) error {
 	api.oas.Post("/notes").
 		HasTags([]string{"Notes"}).
 		HasOperationID("createNote").

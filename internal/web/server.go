@@ -19,8 +19,8 @@ import (
 	"github.com/germandv/apio/internal/tokenauth"
 )
 
-// Api is the main API HTTP server wrapper.
-type Api struct {
+// API is the main API HTTP server wrapper.
+type API struct {
 	mux     *http.ServeMux
 	server  *http.Server
 	logger  *slog.Logger
@@ -37,7 +37,7 @@ func New(
 	tagSvc tags.IService,
 	noteSvc notes.IService,
 	cacheClient cache.Client,
-) *Api {
+) *API {
 	cfg := config.Get()
 	mux := &http.ServeMux{}
 	limiter := newRateLimiter(cacheClient, 50, time.Minute)
@@ -52,7 +52,7 @@ func New(
 		ErrorLog:          slog.NewLogLogger(logger.Handler(), slog.LevelError),
 	}
 
-	api := &Api{
+	api := &API{
 		mux:     mux,
 		server:  server,
 		logger:  logger,
@@ -68,7 +68,7 @@ func New(
 
 // ListenAndServe starts the server in a goroutine.
 // It blocks until the server is shut down and it handles graceful shutdown.
-func (api *Api) ListenAndServe() {
+func (api *API) ListenAndServe() {
 	killSig := make(chan os.Signal, 1)
 	signal.Notify(killSig, os.Interrupt, syscall.SIGTERM, syscall.SIGINT)
 
@@ -100,12 +100,12 @@ func (api *Api) ListenAndServe() {
 }
 
 // Route adds a new route to the API, with its handler and optional middleware
-func (api *Api) Route(
+func (api *API) Route(
 	path string,
 	handler func(w http.ResponseWriter, r *http.Request) error,
 	middleware ...func(http.Handler) http.Handler,
 ) {
-	var h http.Handler = ApiFunc{handler: handler, logger: api.logger}
+	var h http.Handler = APIFunc{handler: handler, logger: api.logger}
 	for _, m := range middleware {
 		h = m(h)
 	}

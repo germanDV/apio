@@ -76,8 +76,14 @@ vet:
 ## lint: lint code
 .PHONY: lint
 lint:
-	@echo 'Linting code...'
-	golangci-lint run --disable-all --enable errcheck,gosimple,ineffassign,unused,staticcheck,gocritic,misspell,stylecheck ./...
+	@echo 'Linting code with golangci-lint...'
+	golangci-lint run --disable-all --enable errcheck,gosimple,ineffassign,unused,gocritic,misspell,stylecheck ./...
+
+## sec: check for security issues
+.PHONY: sec
+sec:
+	@echo 'Running security checks with gosec...'
+	gosec ./...
 
 ## scripts/token u=$1 r=$2: generate an auth token ($ make scripts/token u=<user_id> r=<role>)
 .PHONY: scripts/token

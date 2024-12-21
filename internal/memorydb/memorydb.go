@@ -29,9 +29,9 @@ type NoteTagRow struct {
 }
 
 type data struct {
-	tags      map[string]TagRow
-	notes     map[string]NoteRow
-	note_tags []NoteTagRow
+	tags     map[string]TagRow
+	notes    map[string]NoteRow
+	noteTags []NoteTagRow
 }
 
 type DB struct {
@@ -42,9 +42,9 @@ type DB struct {
 var database = &DB{
 	mu: sync.RWMutex{},
 	data: data{
-		tags:      make(map[string]TagRow),
-		notes:     make(map[string]NoteRow),
-		note_tags: make([]NoteTagRow, 0),
+		tags:     make(map[string]TagRow),
+		notes:    make(map[string]NoteRow),
+		noteTags: make([]NoteTagRow, 0),
 	},
 }
 
@@ -89,7 +89,7 @@ func (db *DB) SaveNoteTags(noteID string, tagIDs []string) error {
 	defer db.mu.Unlock()
 	for _, tagID := range tagIDs {
 		row := NoteTagRow{NoteID: noteID, TagID: tagID}
-		db.data.note_tags = append(db.data.note_tags, row)
+		db.data.noteTags = append(db.data.noteTags, row)
 	}
 	return nil
 }
@@ -105,7 +105,7 @@ func (db *DB) GetNoteTags(id string) ([]TagRow, error) {
 	db.mu.RLock()
 	defer db.mu.RUnlock()
 
-	rows := slices.DeleteFunc(slices.Clone(db.data.note_tags), func(r NoteTagRow) bool {
+	rows := slices.DeleteFunc(slices.Clone(db.data.noteTags), func(r NoteTagRow) bool {
 		return r.NoteID != id
 	})
 
@@ -130,7 +130,7 @@ func (db *DB) CountNotesByTag(tagID string) (int, error) {
 	defer db.mu.RUnlock()
 
 	count := 0
-	for _, r := range db.data.note_tags {
+	for _, r := range db.data.noteTags {
 		if r.TagID == tagID {
 			count++
 		}

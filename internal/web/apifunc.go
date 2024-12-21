@@ -9,13 +9,13 @@ import (
 	"github.com/germandv/apio/internal/errs"
 )
 
-// ApiFunc holds an http.HandlerFunc that returns an error.
-type ApiFunc struct {
+// APIFunc holds an http.HandlerFunc that returns an error.
+type APIFunc struct {
 	handler func(w http.ResponseWriter, r *http.Request) error
 	logger  *slog.Logger
 }
 
-func (af ApiFunc) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+func (af APIFunc) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	start := time.Now()
 	status := http.StatusOK
 
